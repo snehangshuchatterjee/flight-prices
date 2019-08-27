@@ -18,7 +18,7 @@ class SearchComponent extends Component {
 
     handleSourceChange = (event) => {
         const source = event.target.value;
-        const destPrefix = "DEST_" + source.split("-")[0];
+        const destPrefix = `DEST_${source.split("-")[0]}`;
 
         this.setState({
             source: event.target.value,
@@ -67,14 +67,15 @@ class SearchComponent extends Component {
 
     render = () => {
         return (
-            <div className="searchComponent">
+            <div key="searchComponent" className="searchComponent">
                 <h2 className="searchHeading">Search Flights</h2>
-                <LocationComponent id="filter"
+                <LocationComponent id="sourceSelectKey"
                     label="Source"
                     items={constants.SOURCE}
                     onChange={this.handleSourceChange}
                 />
-                <LocationComponent id="filter"
+                <LocationComponent id="destinationSelect"
+                    key="destinationSelect"
                     label="Destination"
                     items={this.state.destinationArray}
                     onChange={this.handleDestinationChange}

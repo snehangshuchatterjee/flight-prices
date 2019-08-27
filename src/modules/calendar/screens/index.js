@@ -58,14 +58,14 @@ class CalendarComponent extends Component {
             <>
                 {source && <h2>Showing flight fares from {source} to {destination}</h2>}
                 <div className="grid-container">
-                    {DAY_ARRAY.map((day) => {
-                        return <DateHeadingComponent key={day}
+                    {DAY_ARRAY.map((day, index) => {
+                        return <DateHeadingComponent key={index}
                             day={day}
                         />
                     })}
                     {dateAndPriceArrays.finalDateArray.map((date, index) => {
                         return <DateTileComponent date={date}
-                            key={new Date(date).getDate()}
+                            key={index}
                             price={dateAndPriceArrays.finalPriceArray[index]}
                         />
                     })}

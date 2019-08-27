@@ -1,63 +1,112 @@
-// importing the type
-import * as actionTypes from './actionTypes';
-import * as actions from './actions';
-import configureStore from 'redux-mock-store';
+import configureMockStore from 'redux-mock-store';
+import * as actionTypes from "./actionTypes";
 import thunk from 'redux-thunk';
+import { createSession, getFlightPrice } from "./actions";
 
-import MockAdapter from 'axios-mock-adapter';
-import axios from 'axios';
+jest.mock('../../services/services');
+jest.mock('./utils/utilityFunctions');
+import { getSessionData, getFilghtData } from '../../services/services';
+import { getLowestPrice } from './utils/utilityFunctions';
 
-import { getSessionDataString } from "./utils/utilityFunctions";
-import { SESSION_BASE_URL } from "./utils/endpoints";
 
-const middlewares = [thunk];
 
-const mockStore = configureStore(middlewares);
-const mock = new MockAdapter(axios);
 
-const store = mockStore({});
-
-describe("Create Sessions", () => {
-    beforeEach(() => {
-        store.clearActions();
-    });
-
-    it('call the fetch prices action', async () => {
-        mock.onPost(SESSION_BASE_URL).reply(201);
-
-        let result = {};
-
-        result.country = "US";
-        result.currency = "USD";
-        result.locale = "en-US";
-        result.origin = "KUL-sky";
-        result.destination = "SIN-sky";
-        result.outDate = "2019-08-27";
-        result.headCount = "1";
-
-        await store.dispatch()
-
-        // store.dispatch(actions.createSession(result)).then(() => {
-        //     let expectedActions = {
-        //         type: actionTypes.CREATE_SESSION
-        //     }
-
-        //     expect.assertions(1);
-        //     expect(store.getActions().type).toEqual(expectedActions.type);
-        // });
-    });
+getLowestPrice.mockImplementation((data) => {
+    return `$3.00`;
 });
 
-describe.only("Fetch Flight Prices", () => {
+const middlewares = [thunk];
+const mockStore = configureMockStore(middlewares);
+
+const getPostData = () => {
+    let result = {};
+
+    result.country = "US";
+    result.currency = "USD";
+    result.locale = "en-US";
+    result.origin = "SIN";
+    result.destination = "KUL";
+    result.outDate = "2019-08-28";
+    result.headCount = "1";
+
+    return result;
+}
+
+describe('Search Actions', () => {
+    let store;
+    // set up a fake store for all our tests
     beforeEach(() => {
-        store.clearActions();
+        store = mockStore({});
     });
 
-    it('call the fetch prices action', async () => {
-        const sessionId = "d3f747cf-7842-48e0-b9be-9caf5ce7949d";
+    describe('Create Session', () => {
+        it('should fetch the session', async () => {
+            getSessionData.mockImplementation(() => {
+                return new Promise((resolve, reject) => {
+                    resolve({
+                        headers: {
+                            location: "www.testurl.com/9aa2ea23-90c5-46e1-9df6-f4b4cf9fcf4c"
+                        }
+                    });
+                })
+            });
+            await store.dispatch(createSession(getPostData()));
 
-        await store.dispatch(actions.getFlightPrice(sessionId))
+            expect(getFlightPrice).toHaveBeenCalled;
+        });
 
-        expect(store.dispatch).toHaveBeenCalled;
+        it('should throw an error for an incorrect API call', async () => {
+            getSessionData.mockImplementation(() => {
+                return new Promise((resolve, reject) => {
+                    reject("New Error");
+                })
+            });
+            await store.dispatch(createSession(getPostData()));
+
+            const expectedOutcome = [{
+                type: actionTypes.CREATE_SESSION_FAIL
+            }];
+
+            expect(store.getActions().type).toEqual(expectedOutcome.type);
+        });
+    });
+
+    describe('Flight Prices', () => {
+        it('should fetch the price details', async () => {
+            getFilghtData.mockImplementation(() => {
+                return new Promise((resolve, reject) => {
+                    resolve({
+                        Itineraries: [{
+                            PricingOptions: [{
+                                Price: "3"
+                            }]
+                        }]
+                    });
+                })
+            });
+            const sessionId = "ec0c76a2-9d5b-4b20-8ae7-9989121c4f07";
+            await store.dispatch(getFlightPrice(sessionId));
+            const expectedOutcome = [{
+                type: actionTypes.CREATE_SESSION_SUCCESS,
+                payload: "$3.00"
+            }]
+
+            expect(store.getActions()).toEqual(expectedOutcome);
+        });
+
+        it('should throw an error for an incorrect API call', async () => {
+            getFilghtData.mockImplementation(() => {
+                return new Promise((resolve, reject) => {
+                    reject("New Error");
+                })
+            });
+            const sessionId = "";
+            await store.dispatch(getFlightPrice(sessionId));
+            const expectedOutcome = [{
+                type: actionTypes.CREATE_SESSION_FAIL
+            }];
+
+            expect(store.getActions().type).toEqual(expectedOutcome.type);
+        });
     });
 });

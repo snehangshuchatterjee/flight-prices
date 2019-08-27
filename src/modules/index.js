@@ -13,7 +13,7 @@ class App extends Component {
                 {
                     loading ? <h3>Loading...</h3> :
                         <div className="appContainer">
-                            <div><SearchComponent /></div>
+                            <div key="searchComponent"><SearchComponent /></div>
                             <div><CalendarComponent /></div>
                         </div>
                 }

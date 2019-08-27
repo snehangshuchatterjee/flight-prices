@@ -1,55 +1,52 @@
 import * as actionTypes from "./actionTypes";
-import axios from 'axios';
 import { getSessionDataString, getSessionId, getLowestPrice, getFlightPriceDefaultURLParams } from "./utils/utilityFunctions";
 
-import * as endPoints from './utils/endpoints';
 import * as headers from './utils/headers';
+import * as services from '../../services/services';
 
 export const createSession = (sessionData) => {
-    return async (dispatch) => {
-        try {
-            dispatch({
-                type: actionTypes.CREATE_SESSION
+    return (dispatch) => {
+        dispatch({
+            type: actionTypes.CREATE_SESSION
+        });
+        const data = getSessionDataString(sessionData);
+        const postHeaders = headers.getHeaders();
+
+        services.getSessionData(data, postHeaders)
+            .then((response) => {
+                const sessionId = getSessionId(response.headers.location);
+
+                dispatch(getFlightPrice(sessionId));
+            })
+            .catch((error) => {
+                dispatch({
+                    type: actionTypes.CREATE_SESSION_FAIL,
+                    payload: error
+                });
             });
-            const data = getSessionDataString(sessionData);
-            const postHeaders = headers.getHeaders();
-
-            const response = await axios.post(endPoints.SESSION_BASE_URL, data, { headers: postHeaders });
-
-            const sessionId = getSessionId(response.headers.location);
-
-            dispatch(getFlightPrice(sessionId));
-        }
-        catch (error) {
-            dispatch({
-                type: actionTypes.CREATE_SESSION_FAIL,
-                payload: error
-            });
-        }
     }
 }
 
 export const getFlightPrice = (sessionId) => {
-    return async (dispatch) => {
-        try {
-            const constantParams = getFlightPriceDefaultURLParams();
-            const postHeaders = headers.getHeaders();
+    return (dispatch) => {
+        const constantParams = getFlightPriceDefaultURLParams();
+        const requestHeaders = headers.getHeaders();
 
-            const response = await axios.get(`${endPoints.FLIGHT_PRICE_URL}/${sessionId}?${constantParams}`, { headers: postHeaders });
+        services.getFilghtData(sessionId, constantParams, requestHeaders)
+            .then((response) => {
+                const price = getLowestPrice(response.data);
 
-            const price = getLowestPrice(response.data);
-
-            dispatch({
-                type: actionTypes.CREATE_SESSION_SUCCESS,
-                payload: price
+                dispatch({
+                    type: actionTypes.CREATE_SESSION_SUCCESS,
+                    payload: price
+                });
+            })
+            .catch((error) => {
+                dispatch({
+                    type: actionTypes.CREATE_SESSION_FAIL,
+                    payload: error
+                });
             });
-        }
-        catch (error) {
-            dispatch({
-                type: actionTypes.CREATE_SESSION_FAIL,
-                payload: error
-            });
-        }
     }
 }
 

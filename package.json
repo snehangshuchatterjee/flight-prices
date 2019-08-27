@@ -43,11 +43,7 @@
     "collectCoverageFrom": [
       "src/**/*.{js,jsx}",
       "!src/index.js",
-      "!<rootDir>/node_modules/",
-      "!src/utils/**/*.js",
-      "!src/axiosClient/**/*.js",
-      "!src/serviceWorker.js",
-      "!src/constants/**/*.js"
+      "!src/serviceWorker.js"
     ],
     "coverageThreshold": {
       "global": {

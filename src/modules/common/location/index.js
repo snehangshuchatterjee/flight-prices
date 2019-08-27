@@ -6,13 +6,13 @@ const LocationComponent = (props) => {
     const { id, label, items, onChange } = props
     return (
         <div className="inputField">
-            <p className="labelField">{label + ": "}</p>
+            <p className="labelField">{`${label}: `}</p>
             <select onChange={onChange} className="dropdownItem">
                 {items && items.map((item) => {
                     return <option
-                        key={id}
+                        key={item}
                         id={id}
-                        value={item + "-sky"}
+                        value={`${item}-sky`}
                     >{item}</option>
                 })}
             </select>
