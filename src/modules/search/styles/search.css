@@ -1,0 +1,23 @@
+.getFaresButtonItem{
+    margin-top: 50px;
+    text-align: center;
+    width: 100px;
+    height: 80px;
+}
+
+.searchHeading{
+    padding-bottom: 20px;
+}
+
+.searchComponent{
+    padding: 30px;
+}
+
+.errorText{
+    color: red;
+    margin-top: 10px;
+}
+
+input[type="submit"]{
+    font-size: 28px;
+}

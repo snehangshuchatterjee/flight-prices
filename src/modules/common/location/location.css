@@ -1,0 +1,17 @@
+/* .inputField{
+    margin: 10px;
+} */
+
+.dropdownItem{
+    font-size: 15px;
+    display: block;
+    width: 80%;
+}
+
+.labelField{
+    font-size: 12px;
+}
+
+p{
+    margin-block-end: 0;
+}

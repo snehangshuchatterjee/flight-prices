@@ -1,0 +1,42 @@
+.grid-item {
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  font-size: 30px;
+  text-align: center;
+}
+
+.grid-header{
+  background-color: rgba(59, 58, 58, 0.8);
+  color: white;
+  font-weight: bold;
+}
+
+.grid-data{
+  min-height: 80px;
+}
+
+.monthItem{
+  font-size: 10px;
+}
+
+.dateItem{
+  font-size: 22px;
+  font-weight: bold;
+  color: rgb(58, 20, 20);
+}
+
+.dateHeaderItem{
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.priceItem{
+  font-size: 22px;
+  padding-top: 10px;
+  color: rgb(8, 185, 8);
+}
+
+.emptySlotItem{
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  background-color: rgb(224, 221, 221) !important;
+}

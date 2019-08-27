@@ -1,0 +1,2 @@
+export const MONTH_ARRAY = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+export const DAY_ARRAY = ["Sun", "Mon", "Tues", "Wed", "Thu", "Fri", "Sat"]
